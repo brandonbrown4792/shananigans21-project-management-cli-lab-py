@@ -32,7 +32,8 @@ def main():
 
     # Mark task complete
     complete_parser = subparsers.add_parser("complete-task")
-    complete_parser.add_argument("--task_id", type=int, required=True)
+    # complete_parser.add_argument("--task_id", type=int required=True) # This should not be an int because UUID's are strings
+    complete_parser.add_argument("--task_id", required=True)
 
     # List commands
     subparsers.add_parser("list-users")
@@ -44,7 +45,8 @@ def main():
     data = load_data()
     users = load_users(data)
     projects = load_projects(data, users)
-    tasks = load_tasks(data, projects, users)
+    # tasks = load_tasks(data, projects, users)
+    tasks = load_tasks(data) # Don't need projects or users to load tasks
 
     if args.command == "add-user":
         user = User(args.name, args.email)
@@ -58,10 +60,10 @@ def main():
         if not user:
             print("User not found.")
             return
-        project = Project(args.title, args.description, args.due_date)
+        project = Project(args.title, args.description, args.due_date, user.id) # The user ID was missing here
         user.add_project(project)
         projects[project.id] = project
-        data["projects"].append(serialize_project(project))
+        data["projects"].append(serialize_project(project)) # probably should add the project to the user as well. This just adds to the project array
         save_data(data)
         print(f"Project '{project.title}' added for user '{user.name}'.")
 
@@ -71,9 +73,9 @@ def main():
             print("Project not found.")
             return
         assigned_user = next((u for u in users.values() if u.name == args.assigned_to), None) if args.assigned_to else None
-        task = Task(args.title, assigned_to=assigned_user)
+        task = Task(args.title, assigned_to=assigned_user, project_id=project.id) # Missing project id here
         project.add_task(task)
-        tasks[task.id] = task
+        tasks[task.id] = task.id # Missing ID
         data["tasks"].append(serialize_task(task))
         save_data(data)
         print(f"Task '{task.title}' added to project '{project.title}'.")

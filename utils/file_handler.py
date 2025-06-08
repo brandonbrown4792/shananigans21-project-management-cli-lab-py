@@ -36,8 +36,10 @@ def serialize_project(project):
         "id": project.id,
         "title": project.title,
         "description": project.description,
-        "due_date": project.due_date.strftime("%Y-%m-%d"),
-        "tasks": [t.id for t in project.tasks]
+        # "due_date": project.due_date.strftime("%Y-%m-%d"), # This did not work because you cannot extract strftime from a regular string
+        "due_date": project.due_date,
+        "tasks": [t.id for t in project.tasks],
+        "user_id": project.user_id # Missing user Id here
     }
 
 def serialize_task(task):
@@ -45,5 +47,6 @@ def serialize_task(task):
         "id": task.id,
         "title": task.title,
         "status": task.status,
-        "assigned_to": task.assigned_to.id if task.assigned_to else None
+        "assigned_to": task.assigned_to if task.assigned_to else None, # Stored as just an id here
+        "project_id": task.project_id # Should include project id with serialization
     }

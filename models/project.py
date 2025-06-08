@@ -7,6 +7,10 @@ class Project:
         self.description = description
         self.due_date = due_date
         self.user_id = user_id
+        self.tasks = [] # Need this here to capture tasks
+
+    def add_task(self, task): # This method was missing
+        self.tasks.append(task)
 
     def __repr__(self):
         return f"Project(id={self.id}, title={self.title}, due_date={self.due_date}, user_id={self.user_id})"
